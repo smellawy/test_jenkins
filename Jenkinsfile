@@ -14,6 +14,19 @@ pipeline {
     }
 
     stages {
+        stage('Login DockerHub') {
+            steps {
+                echo "🔑 Logging into Docker Hub..."
+                // هنا بنستخدم credentials المخزنة في Jenkins
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds', // لازم تكون عملتها قبل كـ Jenkins Credential
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    sh 'echo "M01064387786m" | docker login -u mohamedadel9988 --password-stdin'
+                }
+            }
+        }
 
         stage('Checkout') {
             steps {
@@ -33,20 +46,6 @@ pipeline {
             steps {
                 echo "🐳 Building Docker image..."
                 sh "docker build -t ${IMAGE_NAME}:${TAG} ."
-            }
-        }
-
-        stage('Login DockerHub') {
-            steps {
-                echo "🔑 Logging into Docker Hub..."
-                // هنا بنستخدم credentials المخزنة في Jenkins
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds', // لازم تكون عملتها قبل كـ Jenkins Credential
-                    usernameVariable: 'DOCKER_USERNAME',
-                    passwordVariable: 'DOCKER_PASSWORD'
-                )]) {
-                    sh 'echo "M01064387786m" | docker login -u mohamedadel9988 --password-stdin'
-                }
             }
         }
 
